@@ -11,7 +11,7 @@ def convert_excel_to_json(input_excel_path, output_json_path, sheet_name='Looker
     # Build JSON dictionary
     result = {}
     for _, row in df_clean.iterrows():
-        serial = str(row['Unnamed: 1']).strip()
+        serial = str(row['Unnamed: 1']).strip().zfill(8)
         description = str(row['Unnamed: 0']).strip()
         if serial.lower() != 'nan' and description.lower() != 'nan':
             result[serial] = description
@@ -25,6 +25,6 @@ def convert_excel_to_json(input_excel_path, output_json_path, sheet_name='Looker
 # Usage example
 if __name__ == "__main__":
     input_file = r'C:\Users\William\ProgrammingProjects\DollarDecoder\DOLLARS.xlsx'
-    output_file = r'C:\Users\William\ProgrammingProjects\DollarDecoder\Cleaned_DOLLARS.json'
+    output_file = r'C:\Users\William\ProgrammingProjects\DollarDecoder\DOLLARS.json'
     
     convert_excel_to_json(input_file, output_file)

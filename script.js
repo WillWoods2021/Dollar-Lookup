@@ -1,25 +1,31 @@
+// Load the JSON data
 let dollarData = {};
 
 // Function to load JSON data
 async function loadData() {
     try {
-        const response = await fetch('output.json');
+        const response = await fetch('./output.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         dollarData = await response.json();
-        console.log('Data loaded successfully');
+        console.log('Data loaded successfully', Object.keys(dollarData).length, 'entries');
     } catch (error) {
         console.error('Error loading data:', error);
+        document.getElementById('result').textContent = 'Error loading data. Please make sure output.json exists and the page is served from a web server.';
+        document.getElementById('result').style.color = 'red';
     }
 }
 
-// Search function
-function searchSerial() {
+// Main lookup function (called by the button onclick)
+function lookupSerial() {
     const serialInput = document.getElementById('serialInput');
     const resultDiv = document.getElementById('result');
     const searchValue = serialInput.value.trim();
     
     if (!searchValue) {
         resultDiv.textContent = 'Please enter a serial number.';
-        resultDiv.style.color = 'red';
+        resultDiv.style.color = 'orange';
         return;
     }
     
@@ -33,19 +39,15 @@ function searchSerial() {
     }
 }
 
-// Event listeners
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadData();
     
-    const searchButton = document.getElementById('searchButton');
+    // Add Enter key support for the input field
     const serialInput = document.getElementById('serialInput');
-    
-    searchButton.addEventListener('click', searchSerial);
-    
-    // Allow Enter key to trigger search
     serialInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-            searchSerial();
+            lookupSerial();
         }
     });
 });

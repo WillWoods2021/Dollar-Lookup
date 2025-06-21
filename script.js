@@ -1,22 +1,51 @@
-let serialData = {};
+let dollarData = {};
 
-fetch('./data/dollars.json')
-  .then(response => response.json())
-  .then(data => serialData = data);
-
-function lookupSerial() {
-  const input = document.getElementById("serialInput").value.trim();
-  const resultDiv = document.getElementById("result");
-  const serial = input.trim().padStart(8, '0');
-
-  if (serial.length !== 8) {
-    resultDiv.textContent = "Invalid serial number. Please enter an 8-digit number.";
-    return;
-  }
-  
-  if (serialData[input]) {
-    resultDiv.textContent = serialData[input];
-  } else {
-    resultDiv.textContent = "Serial number not found.";
-  }
+// Function to load JSON data
+async function loadData() {
+    try {
+        const response = await fetch('output.json');
+        dollarData = await response.json();
+        console.log('Data loaded successfully');
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
 }
+
+// Search function
+function searchSerial() {
+    const serialInput = document.getElementById('serialInput');
+    const resultDiv = document.getElementById('result');
+    const searchValue = serialInput.value.trim();
+    
+    if (!searchValue) {
+        resultDiv.textContent = 'Please enter a serial number.';
+        resultDiv.style.color = 'red';
+        return;
+    }
+    
+    // Look up the serial number in the data
+    if (dollarData[searchValue]) {
+        resultDiv.textContent = `Found: ${dollarData[searchValue]}`;
+        resultDiv.style.color = 'green';
+    } else {
+        resultDiv.textContent = 'Serial number not found.';
+        resultDiv.style.color = 'red';
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+    
+    const searchButton = document.getElementById('searchButton');
+    const serialInput = document.getElementById('serialInput');
+    
+    searchButton.addEventListener('click', searchSerial);
+    
+    // Allow Enter key to trigger search
+    serialInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchSerial();
+        }
+    });
+});
